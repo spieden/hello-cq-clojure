@@ -1,0 +1,19 @@
+kind: source
+spec:
+  name: "hello-cq-clojure"
+  registry: "grpc"
+  path: "localhost:7777"
+  version: "v0.0.1"
+  tables:
+    ["*"]
+  destinations:
+    - "sqlite"
+---
+kind: destination
+spec:
+  name: sqlite
+  path: cloudquery/sqlite
+  registry: cloudquery
+  version: "v2.4.15"
+  spec:
+    connection_string: ./db.sqlite

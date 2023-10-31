@@ -8,4 +8,6 @@
         hashp/hashp {:mvn/version "0.2.2"}
         com.rpl/specter {:mvn/version "1.1.4"}
         org.babashka/cli {:mvn/version "0.4.39"}}
- :aliases {:run-cq {:main-opts ["-m" "hello-cq.core"]}}}
+ :aliases {:run-cq {:main-opts ["-m" "hello-cq.core"]}}
+ :mvn/repos {"cloudquery-plugin-sdk-java" {:url "https://maven.pkg.github.com/cloudquery/plugin-sdk-java"}
+             "cloudquery-plugin-pb-java" {:url "https://maven.pkg.github.com/cloudquery/plugin-pb-java"}}}

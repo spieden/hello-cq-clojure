@@ -6,8 +6,7 @@
            (io.cloudquery.server PluginServe)
            (io.grpc.stub StreamObserver)
            (java.util List)
-           (org.apache.arrow.vector.types.pojo ArrowType$Utf8)
-           (org.apache.logging.log4j LogManager)))
+           (org.apache.arrow.vector.types.pojo ArrowType$Utf8)))
 
 (def plugin-name "hello-cq")
 (def plugin-version "v0.0.1")
@@ -49,21 +48,17 @@
       (throw (ex-info "Asked to write a message!?"
                       {:message message})))))
 
-(defn do-sync [include-list
-               skip-list
-               skip-dependent-tables?
+(defn do-sync [client
+               logger
                deterministic-cq-id?
-               backend-options
                sync-stream]
   (-> (Scheduler/builder)
-      ; there's a pre-initialized one in a protected member of Plugin (could use gen-class to get)
       (.client client)
       ; normally filtering is applied here
       (.tables [table])
       (.syncStream sync-stream)
       (.deterministicCqId deterministic-cq-id?)
-      ; also a pre-initialized one of these in a protected member
-      (.logger (LogManager/getLogger))
+      (.logger logger)
       (.concurrency 1)
       (.build)
       (.sync)))
@@ -75,7 +70,10 @@
     (tables ^List [^List include-list ^List skip-list ^Boolean skip-dependent-tables?]
       [table])
     (sync ^void [^List include-list ^List skip-list ^Boolean skip-dependent-tables? ^Boolean deterministic-cq-id? ^BackendOptions backend-options ^StreamObserver sync-stream]
-      (do-sync include-list skip-list skip-dependent-tables? deterministic-cq-id? backend-options sync-stream))
+      (do-sync (proxy-super getClient)
+               (proxy-super getLogger)
+               deterministic-cq-id?
+               sync-stream))
     (read []
       (throw (ex-info "Asked to read!?" {})))
     (write [^WriteMessage message]
